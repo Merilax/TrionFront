@@ -1,0 +1,21 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient y2="0" x2="1" y1="0" x1="0" id="svg_54">
+   <stop offset="0.14063" stop-opacity="0.98047" stop-color="#4ee5e5"/>
+   <stop offset="0.85938" stop-opacity="0.98438" stop-color="#0047a5"/>
+  </linearGradient>
+  <linearGradient y2="0" x2="1" y1="0" x1="0" id="svg_59">
+   <stop offset="0" stop-opacity="0.99609" stop-color="#005fbf"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#00ffff"/>
+  </linearGradient>
+ </defs>
+ <g>
+  <title>Layer 1</title>
+  <path filter="url(#svg_3_blur)" stroke="#000" stroke-width="10" id="svg_3" d="m9.06073,29.38489l140.93928,241.23022l140.93928,-241.23022l-281.87857,0z" fill="url(#svg_54)"/>
+  <path stroke="#000" filter="url(#svg_3_blur)" stroke-width="10" id="svg_35" d="m10,29.38489l121.53637,208.02041l121.53638,-208.02041l-243.07276,0z" fill="url(#svg_54)"/>
+  <path stroke="#000" filter="url(#svg_3_blur)" stroke-width="10" id="svg_36" d="m47.86653,31l102.13346,174.81059l102.13348,-174.81059l-204.26694,0z" fill="url(#svg_54)"/>
+  <path stroke="#000" filter="url(#svg_3_blur)" stroke-width="10" id="svg_37" d="m68,63.1085l82.43038,141.08698l82.43038,-141.08698l-164.86076,0z" fill="#000000"/>
+  <path stroke="url(#svg_59)" filter="url(#svg_3_blur)" stroke-width="10" id="svg_38" d="m88.40087,77.35364l61.59913,105.43242l61.59913,-105.43242l-123.19825,0z" fill="none"/>
+  <path id="svg_56" d="m218.96523,198.27451" opacity="1" stroke-width="10" stroke="#000" fill="url(#svg_54)"/>
+ </g>
+</svg>
