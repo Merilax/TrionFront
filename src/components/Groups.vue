@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-    <div class="groups-div col-1 ps-0"></div>
+    <div class="groups-div w-1/12"></div>
 </template>
 
 <style>

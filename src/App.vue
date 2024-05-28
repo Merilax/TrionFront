@@ -1,36 +1,102 @@
+<template>
+    <TriHeader />
+    <main class="flex columns-4">
+        <TriGroups />
+        <TriChannels />
+        <TriChat ref="ChatRef" :getFormattedDateTime=getFormattedDateTime />
+        <TriMembers />
+    </main>
+</template>
+
 <script setup>
+import { provide, ref } from 'vue'
 import TriHeader from './components/Header.vue';
 import TriGroups from './components/Groups.vue';
 import TriChannels from './components/Channels.vue';
 import TriMembers from './components/Members.vue';
 import TriChat from './components/Chat.vue';
+
+const ChatRef = ref(TriChat);
+const printMessage = (msg) => ChatRef.value.printMessage(msg);
+
+const ws = new WebSocket('wss://' + 'localhost:4111' + '/');
+const messagesPendingSentCheck = [];
+
+ws.addEventListener("open", () => {
+    console.log("Connected to WebSocket.");
+    retrieveMessageHistory();
+});
+
+const messagesDiv = document.getElementById("messages-div");
+
+const msgInput = document.getElementById("textbox-input");
+
+ws.onmessage = (event) => {
+    console.log(event.data);
+
+    try {
+        let json = JSON.parse(event.data);
+        if (!json.ok) {
+            console.log("Server return error: " + json.reason);
+            return;
+        }
+        switch (json.method) {
+            case "sendMessage":
+                printMessage(json.data);
+                break;
+
+            case "getMessageHistory":
+                json.data.forEach(msg => {
+                    printMessage(msg);
+                });
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                break;
+
+            default:
+                console.log("Unrecognised server method: " + json.method);
+                break;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+function sendMessage() {
+    let msg = msgInput.value.trim();
+    if (msg == "") return;
+
+    //sendMessageLocal(msg); Needs a server OK check
+    sendMessageToServer(msg);
+}
+
+function sendMessageToServer(msg) {
+    let json = { userId: "0", method: "sendMessage", messageContent: msg, timestamp: Date.now() };
+
+    ws.send(JSON.stringify(json));
+}
+
+function sendMessageLocal(msg) {
+    printMessage(msg);
+    //printMessage(msg);
+}
+
+function retrieveMessageHistory() {
+    let json = { method: "getMessageHistory" }
+
+    ws.send(JSON.stringify(json));
+}
+
+const getFormattedDateTime = (timestamp) => {
+    let date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, 0);
+    const minutes = date.getMinutes().toString().padStart(2, 0);
+    const seconds = date.getSeconds().toString().padStart(2, 0);
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+provide('getFormattedDateTime', getFormattedDateTime);
 </script>
-
-<template>
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Trion</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    </head>
-
-    <body class="grid">
-        <TriHeader />
-        <main class="container-fluid row m-0 p-0">
-            <TriChannels />
-            <TriGroups />
-            <TriChat />
-            <TriMembers />
-        </main>
-        <script src="/static/src/chat.js"></script>
-    </body>
-
-    </html>
-</template>
 
 <style>
 :root {
@@ -66,9 +132,11 @@ import TriChat from './components/Chat.vue';
     }
 }
 
-p {
+p,
+span {
     color: var(--txtdark);
 }
+
 
 body {
     background-color: var(--bgdark);
@@ -79,11 +147,23 @@ main {
     height: 92dvh;
 }
 
-input {
-    background-color: var(--depth-dark1);
+input,
+textarea {
+    background-color: var(--depth-dark2);
     border: 0;
     color: var(--txtdark);
     font-size: 1rem;
+    padding: .2rem;
+}
+
+*:focus {
+    outline: none;
+}
+
+input:focus,
+textarea:focus {
+    box-shadow: var(--color-dark5) 0 0 5px;
+    transition: all .3s;
 }
 
 button {

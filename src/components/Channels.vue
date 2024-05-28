@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-    <div class="channels-div col-2"></div>
+    <div class="channels-div w-2/12"></div>
 </template>
 
 <style>
