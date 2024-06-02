@@ -20,16 +20,11 @@ const ChatRef = ref(TriChat);
 const printMessage = (msg) => ChatRef.value.printMessage(msg);
 
 const ws = new WebSocket('wss://' + 'localhost:4111' + '/');
-const messagesPendingSentCheck = [];
 
 ws.addEventListener("open", () => {
     console.log("Connected to WebSocket.");
     retrieveMessageHistory();
 });
-
-const messagesDiv = document.getElementById("messages-div");
-
-const msgInput = document.getElementById("textbox-input");
 
 ws.onmessage = (event) => {
     console.log(event.data);
@@ -49,8 +44,6 @@ ws.onmessage = (event) => {
                 json.data.forEach(msg => {
                     printMessage(msg);
                 });
-
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 break;
 
             default:
@@ -62,7 +55,7 @@ ws.onmessage = (event) => {
     }
 };
 
-function sendMessage() {
+function sendMessage(msgInput) {
     let msg = msgInput.value.trim();
     if (msg == "") return;
 
@@ -96,6 +89,7 @@ const getFormattedDateTime = (timestamp) => {
 }
 
 provide('getFormattedDateTime', getFormattedDateTime);
+provide('sendMessageToServer', sendMessageToServer);
 </script>
 
 <style>
