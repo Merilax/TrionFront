@@ -1,11 +1,20 @@
 <template>
-    <TriHeader />
-    <main class="flex columns-4">
-        <TriGroups />
-        <TriChannels />
-        <TriChat ref="ChatRef" :getFormattedDateTime=getFormattedDateTime />
-        <TriMembers />
-    </main>
+    <Suspense v-if="loggedIn">
+        <div>
+            <TriHeader />
+            <main class="flex">
+                <TriGroups />
+                <TriChannels />
+                <TriChat />
+                <TriMembers />
+            </main>
+        </div>
+        <template #fallback>
+            Loading...
+        </template>
+    </Suspense>
+    <TriLogin v-else />
+
 </template>
 
 <script setup>
@@ -15,70 +24,20 @@ import TriGroups from './components/Groups.vue';
 import TriChannels from './components/Channels.vue';
 import TriMembers from './components/Members.vue';
 import TriChat from './components/Chat.vue';
+import TriLogin from './components/Login.vue';
 
-const ChatRef = ref(TriChat);
-const printMessage = (msg) => ChatRef.value.printMessage(msg);
-
-const ws = new WebSocket('wss://' + 'localhost:4111' + '/');
-
-ws.addEventListener("open", () => {
-    console.log("Connected to WebSocket.");
-    retrieveMessageHistory();
-});
-
-ws.onmessage = (event) => {
-    console.log(event.data);
-
-    try {
-        let json = JSON.parse(event.data);
-        if (!json.ok) {
-            console.log("Server return error: " + json.reason);
-            return;
-        }
-        switch (json.method) {
-            case "sendMessage":
-                printMessage(json.data);
-                break;
-
-            case "getMessageHistory":
-                json.data.forEach(msg => {
-                    printMessage(msg);
-                });
-                break;
-
-            default:
-                console.log("Unrecognised server method: " + json.method);
-                break;
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-function sendMessage(msgInput) {
-    let msg = msgInput.value.trim();
-    if (msg == "") return;
-
-    //sendMessageLocal(msg); Needs a server OK check
-    sendMessageToServer(msg);
-}
-
-function sendMessageToServer(msg) {
-    let json = { userId: "0", method: "sendMessage", messageContent: msg, timestamp: Date.now() };
-
-    ws.send(JSON.stringify(json));
-}
-
-function sendMessageLocal(msg) {
-    printMessage(msg);
-    //printMessage(msg);
-}
-
-function retrieveMessageHistory() {
-    let json = { method: "getMessageHistory" }
-
-    ws.send(JSON.stringify(json));
-}
+const loggedIn = ref(false);
+const loginUser = ref(null);
+const loginToken = ref(null);
+const activeGroup = ref(null);
+const activeChannel = ref(null);
+const isInDirectChannel = ref(false);
+provide('loggedIn', loggedIn);
+provide('loginUser', loginUser);
+provide('loginToken', loginToken);
+provide('activeGroup', activeGroup);
+provide('activeChannel', activeChannel);
+provide('isInDirectChannel', isInDirectChannel);
 
 const getFormattedDateTime = (timestamp) => {
     let date = new Date(timestamp);
@@ -89,7 +48,6 @@ const getFormattedDateTime = (timestamp) => {
 }
 
 provide('getFormattedDateTime', getFormattedDateTime);
-provide('sendMessageToServer', sendMessageToServer);
 </script>
 
 <style>
@@ -102,12 +60,23 @@ provide('sendMessageToServer', sendMessageToServer);
     --txtdark: #eee;
     --txtlight: #111;
 
-    --depth-dark0: #242426;
-    --depth-dark1: #303032;
-    --depth-dark2: #484850;
-    --depth-dark3: #606062;
-    --depth-dark4: #787880;
-    --depth-dark5: #909092;
+    --shadow-dark: #0008;
+    --shadow-light: #0028;
+
+    --depth-dark0: #252528;
+    --depth-dark1: #303033;
+    --depth-dark2: #353538;
+    --depth-dark3: #404043;
+    --depth-dark4: #454548;
+    --depth-dark5: #505053;
+    --depth-dark6: #555558;
+    --depth-dark7: #606063;
+    --depth-dark8: #656568;
+    --depth-dark9: #707073;
+    --depth-dark10: #757578;
+    --depth-dark11: #808083;
+    --depth-dark12: #858588;
+    --depth-dark13: #909093;
 
     --color-dark1: #246;
     --color-dark2: #358;
@@ -141,13 +110,23 @@ main {
     height: 92dvh;
 }
 
+label {
+    color: var(--txtdark);
+    font-size: 1rem;
+    padding: .2rem;
+}
+
 input,
 textarea {
-    background-color: var(--depth-dark2);
+    background-color: var(--depth-dark3);
     border: 0;
     color: var(--txtdark);
     font-size: 1rem;
     padding: .2rem;
+}
+
+* {
+    color: var(--txtdark);
 }
 
 *:focus {
@@ -163,5 +142,6 @@ textarea:focus {
 button {
     background-color: var(--color-dark5);
     border: 0;
+    color: var(--txtdark);
 }
 </style>

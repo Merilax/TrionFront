@@ -1,22 +1,22 @@
-<script setup>
-defineProps(['content', 'time', 'userId']);
-</script>
-
 <template>
-    <div class="messageBox">
+    <div class="messageBox px-2 py-1 my-1">
         <div class="flex justify-between">
-            <span>{{ userId }}</span>
+            <span>{{ username }}</span>
             <span class="text-xs">{{ time }}</span>
         </div>
-        <p>{{ content }}</p>
+        <p class="messageContent text-sm mt-1">{{ content }}</p>
     </div>
 </template>
 
+<script setup>
+defineProps(['content', 'time', 'userId', 'username']);
+</script>
+
 <style>
 .messageBox {
-    background-color: var(--depth-dark2);
-    padding: .4rem 1rem;
-    margin: .3rem 0 !important;
-
+    background-color: var(--depth-dark3);
+}
+.messageContent {
+    white-space: pre;
 }
 </style>
