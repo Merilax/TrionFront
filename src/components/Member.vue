@@ -1,5 +1,5 @@
 <template>
-    <div class="member-div w-full m-1 p-1 ">{{ username }}</div>
+    <div class="member-div w-full my-1 p-1 ">{{ username }}</div>
 </template>
 
 <script setup>

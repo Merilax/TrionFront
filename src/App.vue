@@ -14,6 +14,7 @@
         </template>
     </Suspense>
     <TriLogin v-else />
+    <div id="teleport-target" class="absolute w-dvw"></div>
 
 </template>
 
@@ -144,4 +145,5 @@ button {
     border: 0;
     color: var(--txtdark);
 }
+
 </style>

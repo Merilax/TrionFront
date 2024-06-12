@@ -1,5 +1,5 @@
 <template>
-    <div id="members-div" class="hidden sm:block w-40 lg:w-44 xl:w-52 col-2 w-2/12 h-full flex flex-col">
+    <div id="members-div" class="hidden sm:block w-40 lg:w-44 xl:w-52 col-2 w-2/12 h-full flex flex-col p-1">
         <h1 class="text-xl p-2">Members</h1>
         <Member v-for="member in members" :username="member.user.username" :userId="member.userId" />
     </div>

@@ -22,6 +22,7 @@ const messages = ref([]);
 
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
+const loggedIn = inject('loggedIn');
 
 const getFormattedDateTime = inject('getFormattedDateTime');
 const activeGroup = inject('activeGroup');
@@ -29,6 +30,7 @@ const activeChannel = inject('activeChannel');
 
 watch(activeChannel, () => {
     messages.value = [];
+    if (!activeChannel.value) return;
     getMessages();
 });
 
@@ -95,6 +97,13 @@ async function getMessages() {
             credentials: "include"
         });
         const json = await res.json();
+        if (res.status == 401) {
+            Cookies.remove('authData');
+            loginUser.value = null;
+            loginToken.value = null;
+            loggedIn.value = false;
+            return;
+        }
         json.data.forEach(msg => printMessage(msg));
     } catch (error) {
         console.log(error);
