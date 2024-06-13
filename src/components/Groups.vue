@@ -1,7 +1,7 @@
 <template>
     <div id="groups-div" class="w-12 sm:w-14 lg:w-16 flex flex-col items-center p-1">
         <button id="createGroupBtn" @click.stop.prevent="showGroupCreator = !showGroupCreator">+</button>
-        
+
         <Transition>
             <form v-if="showGroupCreator" id="groupCreator" class="flex flex-col p-2">
                 <label for="groupName">Group name:</label>
@@ -14,7 +14,8 @@
             </form>
         </Transition>
 
-        <Group v-for="userGroup in groups" :groupName="userGroup.group.name" :groupDescription="userGroup.group.description" :groupIcon="userGroup.group.icon"
+        <Group v-for="userGroup in groups" :groupName="userGroup.group.name"
+            :groupDescription="userGroup.group.description" :groupIcon="userGroup.group.icon"
             :groupId="userGroup.group.id" :groupAllowJoining="userGroup.group.allowJoining" />
     </div>
 </template>
@@ -78,6 +79,7 @@ async function createGroup() {
     }
 
     if (json.ok) groups.value.push(json.data);
+    console.log(groups.value);
 }
 
 async function joinGroup() {

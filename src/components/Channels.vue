@@ -1,6 +1,9 @@
 <template>
     <div id="channels-div" class="w-36 sm:w-40 lg:w-44 xl:w-52 flex flex-col p-1 ">
-        <div v-if="activeGroup" id="channelsGroup" class="text-xl p-1 mb-2">{{ activeGroup.group.name }}</div>
+        <div v-if="activeGroup" id="channelsGroup" class=" p-1 mb-2">
+            <h2 class="text-xl">{{ activeGroup.group.name }}</h2>
+            <p class="text-sm">Invite ID: {{ activeGroup.group.id }}</p>
+        </div>
 
         <button v-if="activeGroup" id="createChannelBtn" class="self-center"
             @click.stop.prevent="showChannelCreator = !showChannelCreator">+</button>
@@ -12,7 +15,8 @@
                 <button @click.stop.prevent="createChannel()" class="mt-2">Create channel</button>
             </form>
         </Transition>
-        <Channel v-for="chn in channels" :key="chn.id" :channelName="chn.name" :channelDescription="chn.description" :channelId="chn.id" class="" />
+        <Channel v-for="chn in channels" :key="chn.id" :channelName="chn.name" :channelDescription="chn.description"
+            :channelId="chn.id" class="" />
     </div>
 </template>
 
@@ -98,7 +102,7 @@ watch(activeGroup, async () => {
     transition: all 0.5s ease;
 }
 
-.v-enter-from,  
+.v-enter-from,
 .v-leave-to {
     opacity: 0;
     transform: translateY(6rem);

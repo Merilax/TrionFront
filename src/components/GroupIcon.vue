@@ -1,5 +1,5 @@
 <template>
-    <div id="groupsDiv" class="flex flex-col">
+    <div id="groupsDiv" class="relative flex flex-col">
         <img v-if="groupIcon" class="group-div" :src="groupIcon" :alt="groupName" @click="setActiveGroup()" />
         <span v-else class="group-div w-full flex justify-center items-center my-2 cursor-pointer"
             @click="setActiveGroup()" @contextmenu.prevent="showMenu = !showMenu">{{ groupNameRef }}</span>
@@ -99,7 +99,7 @@ async function deleteGroup() {
     }).then(res => res.json());
 
     if (json.ok) {
-        groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.channelId })), 1);
+        groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.groupId })), 1);
         if (activeGroup.value === props.groupId)
             activeGroup.value = null;
     }
@@ -118,7 +118,7 @@ async function leaveGroup() {
     }).then(res => res.json());
 
     if (json.ok) {
-        groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.channelId })), 1);
+        groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.groupId })), 1);
         if (activeGroup.value === props.groupId)
             activeGroup.value = null;
     }
@@ -169,7 +169,7 @@ async function updateGroup() {
 }
 
 .dropdown {
-    top: 9rem;
+    top: 3.5rem;
     background-color: var(--depth-dark7);
     z-index: 10;
     box-shadow: 0 0 4px var(--shadow-dark);
