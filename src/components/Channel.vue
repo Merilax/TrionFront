@@ -9,7 +9,8 @@
         </div>
         <Teleport to="#teleport-target">
             <Transition>
-                <form v-if="showEditor" id="channelEditor" class="flex flex-col p-2 absolute w-80 space-y-1">
+                <form v-if="showEditor" id="channelEditor" class="flex flex-col p-2 absolute w-80 space-y-1"
+                    ref="clickoutClose">
                     <label for="channelName">Name:</label>
                     <input type="text" id="channelName" name="channelName" v-model="editorName" required />
                     <label for="channelDescription">Description:</label>
@@ -23,7 +24,7 @@
 
 <script setup>
 import * as trionConfig from '../../trion.config.json';
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 
 const props = defineProps({
     channelName: { type: String, required: true },
@@ -37,6 +38,7 @@ const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const channels = inject('channels');
 
+const clickoutClose = ref(null);
 const showMenu = ref(false);
 const showEditor = ref(false);
 
@@ -45,6 +47,13 @@ const editorDescription = ref("");
 
 editorName.value = props.channelName;
 editorDescription.value = props.channelDescription;
+
+onMounted(() => {
+    document.addEventListener("click", (e) => {
+        if (e.target == clickoutClose.value || e.target.parentNode == clickoutClose.value) return;
+        showEditor.value = false;
+    });
+});
 
 async function setActiveChannel() {
     const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id }
@@ -60,7 +69,7 @@ async function setActiveChannel() {
 
     if (json.ok) {
         activeChannel.value = json.data;
-        showEditor = false;
+        showEditor.value = false;
     }
 }
 

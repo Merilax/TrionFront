@@ -10,8 +10,9 @@
         </div>
         <Teleport to="#teleport-target">
             <Transition>
-                <form v-if="showEditor" id="groupEditor"
-                    class="flex flex-col justify-left  p-2 absolute w-80 space-y-1">
+                <form v-if="showEditor" id="groupEditor" class="flex flex-col justify-left p-2 absolute w-80 space-y-1"
+                    ref="clickoutClose">
+                    <!-- <span class="absolute cursor-pointer" @click="showEditor = false;">x</span> -->
                     <label for="groupName">Name:</label>
                     <input type="text" id="groupName" name="groupName" v-model="editorName" required />
                     <label for="groupDescription">Description:</label>
@@ -28,7 +29,7 @@
 
 <script setup>
 import * as trionConfig from '../../trion.config.json';
-import { inject, reactive, ref } from 'vue';
+import { inject, onMounted, reactive, ref } from 'vue';
 
 const props = defineProps({
     groupName: {
@@ -53,6 +54,7 @@ const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const groups = inject('groups');
 
+const clickoutClose = ref(null);
 const groupNameRef = ref(props.groupName);
 const showMenu = ref(false);
 const showEditor = ref(false);
@@ -71,6 +73,13 @@ for (let i = 0; i < groupNamePreview.length; i++) {
 };
 groupNameRef.value = groupNamePreview.join('').slice(0, 3);
 
+onMounted(() => {
+    document.addEventListener("click", (e) => {
+        if (e.target == clickoutClose.value || e.target.parentNode == clickoutClose.value) return;
+        showEditor.value = false;
+    });
+});
+
 async function setActiveGroup() {
     const payload = { userId: loginUser.value.id }
     const json = await fetch(`https://${trionConfig.domain}/group/${props.groupId}/get`, {
@@ -86,7 +95,7 @@ async function setActiveGroup() {
     if (json.ok) {
         activeGroup.value = json.data;
         activeChannel.value = null;
-        showEditor = false;
+        showEditor.value = false;
     }
 }
 
