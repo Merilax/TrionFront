@@ -9,7 +9,7 @@
             @click.stop.prevent="showChannelCreator = !showChannelCreator">+</button>
 
         <Transition>
-            <form v-if="showChannelCreator" id="channelCreator" class="flex flex-col p-2">
+            <form v-if="showChannelCreator" id="channelCreator" class="flex flex-col p-2" ref="clickoutClose">
                 <label for="channelName">Channel name:</label>
                 <input type="text" id="channelName" name="channelName" v-model="channelCreatorName" />
                 <button @click.stop.prevent="createChannel()" class="mt-2">Create channel</button>
@@ -30,11 +30,19 @@ const activeChannel = inject('activeChannel');
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 
+const clickoutClose = ref(null);
 const channels = ref([]);
 const showChannelCreator = ref(false);
 const channelCreatorName = ref("");
 
 provide('channels', channels);
+
+onMounted(() => {
+    document.addEventListener("click", (e) => {
+        if (e.target == clickoutClose.value || e.target.parentNode == clickoutClose.value) return;
+        showChannelCreator.value = false;
+    });
+});
 
 async function createChannel() {
     if (channelCreatorName.value == "") return;
