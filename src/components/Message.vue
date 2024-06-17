@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 defineProps(['content', 'time', 'userId', 'username']);
 </script>
 

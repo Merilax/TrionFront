@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject, provide, ref } from 'vue';
 import Group from './GroupIcon.vue';
 import Cookies from 'js-cookie';
@@ -37,7 +38,7 @@ const groupCreatorId = ref("");
 provide('groups', groups);
 
 const payload = { userId: loginUser.value.id }
-const res = await fetch(`https://localhost:4111/user/${loginUser.value.id}/groups`, {
+const res = await fetch(`https://${trionConfig.domain}/user/${loginUser.value.id}/groups`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers: {
@@ -60,7 +61,7 @@ async function createGroup() {
     if (groupCreatorName.value == "") return;
 
     const payload = { userId: loginUser.value.id, name: groupCreatorName.value }
-    const res = await fetch(`https://localhost:4111/group/`, {
+    const res = await fetch(`https://${trionConfig.domain}/group/`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -86,7 +87,7 @@ async function joinGroup() {
     if (groupCreatorId.value == "") return;
 
     const payload = { userId: loginUser.value.id }
-    const res = await fetch(`https://localhost:4111/group/${groupCreatorId.value}/join`, {
+    const res = await fetch(`https://${trionConfig.domain}/group/${groupCreatorId.value}/join`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

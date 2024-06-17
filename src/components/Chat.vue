@@ -12,6 +12,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject, ref, watch } from 'vue';
 import TriMessage from './Message.vue';
 import TriTextareaScaled from './TextareaScaled.vue';
@@ -34,7 +35,7 @@ watch(activeChannel, () => {
     getMessages();
 });
 
-const ws = new WebSocket('wss://' + 'localhost:4111' + '/');
+const ws = new WebSocket(`wss://${trionConfig.domain}/`);
 
 ws.addEventListener("open", () => {
     console.log("Connected to WebSocket.");
@@ -87,7 +88,7 @@ function printMessage(data) {
 async function getMessages() {
     try {
         const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id }
-        const res = await fetch(`https://localhost:4111/channel/${activeChannel.value.id}/messages`, {
+        const res = await fetch(`https://${trionConfig.domain}/channel/${activeChannel.value.id}/messages`, {
             method: "POST",
             body: JSON.stringify(payload),
             headers: {

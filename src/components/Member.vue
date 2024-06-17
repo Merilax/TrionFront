@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject } from 'vue';
 
 const props = defineProps(['username', 'userId']);

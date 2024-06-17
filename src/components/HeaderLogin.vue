@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import Cookies from 'js-cookie';
 import { inject } from 'vue';
 

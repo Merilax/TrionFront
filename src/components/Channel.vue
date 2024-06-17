@@ -22,6 +22,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject, ref } from 'vue';
 
 const props = defineProps({
@@ -47,7 +48,7 @@ editorDescription.value = props.channelDescription;
 
 async function setActiveChannel() {
     const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id }
-    const json = await fetch(`https://localhost:4111/channel/${props.channelId}/get`, {
+    const json = await fetch(`https://${trionConfig.domain}/channel/${props.channelId}/get`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -64,7 +65,7 @@ async function setActiveChannel() {
 
 async function deleteChannel() {
     const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id }
-    const json = await fetch(`https://localhost:4111/channel/${props.channelId}/delete`, {
+    const json = await fetch(`https://${trionConfig.domain}/channel/${props.channelId}/delete`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -87,7 +88,7 @@ async function updateChannel() {
     const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id, name: editorName.value }
     if (editorDescription.value !== "") payload.description = editorDescription.value;
 
-    const json = await fetch(`https://localhost:4111/channel/${props.channelId}/modify`, {
+    const json = await fetch(`https://${trionConfig.domain}/channel/${props.channelId}/modify`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

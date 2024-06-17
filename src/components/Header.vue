@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import HeaderLogin from './HeaderLogin.vue';
 </script>
 

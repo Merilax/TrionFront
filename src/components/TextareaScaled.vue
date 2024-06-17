@@ -4,6 +4,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 const msgInput = defineModel();
 
 const onInput = (event) => {

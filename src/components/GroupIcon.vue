@@ -27,6 +27,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject, reactive, ref } from 'vue';
 
 const props = defineProps({
@@ -71,7 +72,7 @@ groupNameRef.value = groupNamePreview.join('').slice(0, 3);
 
 async function setActiveGroup() {
     const payload = { userId: loginUser.value.id }
-    const json = await fetch(`https://localhost:4111/group/${props.groupId}/get`, {
+    const json = await fetch(`https://${trionConfig.domain}/group/${props.groupId}/get`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -88,7 +89,7 @@ async function setActiveGroup() {
 
 async function deleteGroup() {
     const payload = { userId: loginUser.value.id }
-    const json = await fetch(`https://localhost:4111/group/${props.groupId}/delete`, {
+    const json = await fetch(`https://${trionConfig.domain}/group/${props.groupId}/delete`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -107,7 +108,7 @@ async function deleteGroup() {
 
 async function leaveGroup() {
     const payload = { userId: loginUser.value.id }
-    const json = await fetch(`https://localhost:4111/group/${props.groupId}/leave`, {
+    const json = await fetch(`https://${trionConfig.domain}/group/${props.groupId}/leave`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -130,7 +131,7 @@ async function updateGroup() {
     const payload = { userId: loginUser.value.id, name: editorName.value, allowJoining: editorAllowJoining.value }
     if (editorDescription.value !== "") payload.description = editorDescription.value;
 
-    const json = await fetch(`https://localhost:4111/group/${props.groupId}/modify`, {
+    const json = await fetch(`https://${trionConfig.domain}/group/${props.groupId}/modify`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

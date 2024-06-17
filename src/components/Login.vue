@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import Cookies from 'js-cookie';
 import { inject, ref } from 'vue';
 
@@ -42,7 +43,7 @@ async function processLoginForm(path) {
 
     try {
         const payload = { username: username.value, password: password.value };
-        const json = await fetch("https://localhost:4111/auth/" + path, {
+        const json = await fetch(`https://${trionConfig.domain}/auth/` + path, {
             method: "POST",
             body: JSON.stringify(payload),
             headers: { "Content-Type": "application/json", },

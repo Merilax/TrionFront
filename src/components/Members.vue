@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import { inject, ref, watch } from 'vue';
 import Member from './Member.vue';
 
@@ -17,7 +18,7 @@ const members = ref([]);
 
 watch(activeGroup, async () => {
     const payload = { userId: loginUser.value.id }
-    const json = await fetch(`https://localhost:4111/group/${activeGroup.value.group.id}/members`, {
+    const json = await fetch(`https://${trionConfig.domain}/group/${activeGroup.value.group.id}/members`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

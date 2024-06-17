@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+import * as trionConfig from '../../trion.config.json';
 import Channel from './Channel.vue'
 import { inject, provide, ref, watch } from 'vue';
 
@@ -39,7 +40,7 @@ async function createChannel() {
     if (channelCreatorName.value == "") return;
 
     const payload = { userId: loginUser.value.id, groupId: activeGroup.value.group.id, name: channelCreatorName.value }
-    const res = await fetch(`https://localhost:4111/channel/`, {
+    const res = await fetch(`https://${trionConfig.domain}/channel/`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -56,7 +57,7 @@ async function createChannel() {
 watch(activeGroup, async () => {
     if (!activeGroup.value) return;
     const payload = { userId: loginUser.value.id }
-    const res = await fetch(`https://localhost:4111/group/${activeGroup.value.group.id}/channels`, {
+    const res = await fetch(`https://${trionConfig.domain}/group/${activeGroup.value.group.id}/channels`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
