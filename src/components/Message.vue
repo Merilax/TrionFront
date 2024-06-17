@@ -16,8 +16,11 @@ defineProps(['content', 'time', 'userId', 'username']);
 <style>
 .messageBox {
     background-color: var(--depth-dark3);
+    max-width: 100%;
+    height: auto;
 }
 .messageContent {
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 </style>

@@ -5,7 +5,7 @@
                 :content="message.content" :userId="message.userId" :time="message.time" />
         </div>
         <div id="textbox-div" class="p-2 w-full h-auto flex" v-if="activeChannel">
-            <TriTextareaScaled v-model="msgInput" />
+            <TriTextareaScaled v-model="msgInput" @keypress.enter.exact.stop="sendMessage()" />
             <button id="textbox-send" class="" @click="sendMessage()">></button>
         </div>
     </div>
@@ -58,6 +58,7 @@ function sendMessage() {
     if (msg == "") return;
     //sendMessageLocal(msg); Needs a server OK check
     sendMessageToServer(msg);
+    setTimeout(() => { msgInput.value = "" }, 100);
 }
 
 function sendMessageToServer(msg) {
@@ -119,6 +120,7 @@ async function getMessages() {
 
 #messages-div {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #textbox-send {

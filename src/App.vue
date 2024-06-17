@@ -109,6 +109,7 @@ body {
 
 main {
     height: 92dvh;
+    width: 100dvw;
 }
 
 label {
