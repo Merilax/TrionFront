@@ -23,7 +23,7 @@
 <script setup>
 import * as trionConfig from '../../trion.config.json';
 import Channel from './Channel.vue'
-import { inject, provide, ref, watch } from 'vue';
+import { inject, onMounted, provide, ref, watch } from 'vue';
 
 const activeGroup = inject('activeGroup');
 const activeChannel = inject('activeChannel');
