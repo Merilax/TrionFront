@@ -4,7 +4,7 @@
         <span v-else class="group-div w-full flex justify-center items-center my-2 cursor-pointer"
             @click="setActiveGroup()" @contextmenu.prevent="showMenu = !showMenu">{{ groupNameRef }}</span>
         <div v-if="showMenu" class="dropdown absolute w-40 space-y-1  ">
-            <div class="w-full cursor-pointer" @click.stop="showEditor = !showEditor"> Setings </div>
+            <div class="w-full cursor-pointer" @click.stop="showEditor = !showEditor; showMenu = false"> Setings </div>
             <div class="w-full cursor-pointer" @click.stop="leaveGroup()"> Leave group </div>
             <div class="w-full cursor-pointer" @click.stop="deleteGroup()"> Delete group </div>
         </div>
@@ -48,6 +48,7 @@ const props = defineProps({
 });
 
 const activeGroup = inject('activeGroup');
+const activeChannel = inject('activeChannel');
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const groups = inject('groups');
@@ -84,6 +85,8 @@ async function setActiveGroup() {
 
     if (json.ok) {
         activeGroup.value = json.data;
+        activeChannel.value = null;
+        showEditor = false;
     }
 }
 

@@ -4,7 +4,7 @@
         {{ channelName }}
         <span class="extra" @click.stop.prevent="showMenu = !showMenu">...</span>
         <div v-if="showMenu" class="dropdown absolute w-full space-y-1">
-            <div class="w-full" @click.stop.prevent="showEditor = !showEditor">Settings</div>
+            <div class="w-full" @click.stop.prevent="showEditor = !showEditor; showMenu = false">Settings</div>
             <div class="w-full" @click.stop.prevent="deleteChannel()">Delete</div>
         </div>
         <Teleport to="#teleport-target">
@@ -60,6 +60,7 @@ async function setActiveChannel() {
 
     if (json.ok) {
         activeChannel.value = json.data;
+        showEditor = false;
     }
 }
 
