@@ -1,11 +1,11 @@
 <template>
     <div class="chat-div w-7/12 grow flex flex-col justify-between">
-        <div id="messages-div" class="p-2 w-full h-full" :ref="messagesDiv">
+        <div id="messages-div" class="p-2 w-full h-full" ref="messagesDiv">
             <TriMessage v-for="message in messages" :key="message.id" :username="message.username"
                 :content="message.content" :userId="message.userId" :time="message.time" />
         </div>
         <div id="textbox-div" class="p-2 w-full h-auto flex" v-if="activeChannel">
-            <TriTextareaScaled v-model="msgInput" @keypress.enter.exact.stop="sendMessage()" />
+            <TriTextareaScaled v-model="msgInput" @keypress.enter.exact.stop="sendMessage()" ref="textbox" />
             <button id="textbox-send" class="" @click="sendMessage()">></button>
         </div>
     </div>
@@ -13,14 +13,15 @@
 
 <script setup>
 import * as trionConfig from '../../trion.config.json';
-import { inject, ref, watch } from 'vue';
+import { inject, provide, ref, watch } from 'vue';
 import TriMessage from './Message.vue';
 import TriTextareaScaled from './TextareaScaled.vue';
 
-const messagesDiv = ref();
+const messagesDiv = ref(null);
+const textbox = ref(null);
 const msgInput = ref('');
-const messages = ref([]);
 
+const messages = inject('messages');
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const loggedIn = inject('loggedIn');
@@ -35,30 +36,35 @@ watch(activeChannel, () => {
     getMessages();
 });
 
-const ws = new WebSocket(`wss://${trionConfig.domain}/`);
-
-ws.addEventListener("open", () => {
-    console.log("Connected to WebSocket.");
-});
-
-ws.onmessage = (event) => {
-    console.log(event.data);
-
-    try {
-        let json = JSON.parse(event.data);
-        printMessage(json);
-
-    } catch (error) {
-        console.log(error);
+let ws;
+function connectWS() {
+    ws = new WebSocket(`wss://${trionConfig.domain}/`);
+    ws.onopen = () => {
+        console.log("Connected to WebSocket.");
     }
-};
+    ws.onclose = () => {
+        setTimeout(() => {
+            connectWS();
+        }, 300);
+    };
+    ws.onmessage = (event) => {
+        try {
+            let json = JSON.parse(event.data);
+            printMessage(json);
+        } catch (error) { }
+    };
+    ws.onerror = (event) => {
+        console.log(event.message);
+    }
+}
+connectWS();
 
 function sendMessage() {
     let msg = msgInput.value.trim();
     if (msg == "") return;
     //sendMessageLocal(msg); Needs a server OK check
     sendMessageToServer(msg);
-    setTimeout(() => { msgInput.value = "" }, 100);
+    msgInput.value = "";
 }
 
 function sendMessageToServer(msg) {
@@ -77,14 +83,20 @@ function printMessage(data) {
     let message = {
         id: data.id,
         userId: data.userId,
-        username: data.user.username,
+        username: "Deleted user",
         time: formattedTime,
         content: data.content
     }
-
+    if (data.user) {
+        message.username = data.user.username;
+    }
     messages.value.push(message);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
+watch(messages, (newData, oldData) => {
+    if (messagesDiv.value.scrollTop === messagesDiv.value.scrollHeight)
+        scrollToBottom();
+}, { deep: true, flush: 'post' });
 
 async function getMessages() {
     try {
@@ -107,9 +119,14 @@ async function getMessages() {
             return;
         }
         json.data.forEach(msg => printMessage(msg));
+        scrollToBottom();
     } catch (error) {
         console.log(error);
     }
+}
+
+function scrollToBottom() {
+    messagesDiv.value.scrollTop = messagesDiv.value.scrollHeight;
 }
 </script>
 

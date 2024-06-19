@@ -13,6 +13,9 @@ import { inject } from 'vue';
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const loggedIn = inject('loggedIn');
+const activeGroup = inject('activeGroup');
+const activeChannel = inject('activeChannel');
+const messages = inject('messages');
 
 let username = loginUser.value.username;
 
@@ -21,8 +24,10 @@ function logout() {
     loginUser.value = null;
     loginToken.value = null;
     loggedIn.value = false;
+    activeGroup.value = null;
+    activeChannel.value = null
+    messages.value = [];
 }
 </script>
 
-<style>
-</style>
+<style></style>

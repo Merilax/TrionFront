@@ -3,7 +3,7 @@
         <img v-if="groupIcon" class="group-div" :src="groupIcon" :alt="groupName" @click="setActiveGroup()" />
         <span v-else class="group-div w-full flex justify-center items-center my-2 cursor-pointer"
             @click="setActiveGroup()" @contextmenu.prevent="showMenu = !showMenu">{{ groupNameRef }}</span>
-        <div v-if="showMenu" class="dropdown absolute w-40 space-y-1  ">
+        <div v-if="showMenu" class="dropdown absolute w-40 space-y-1" ref="groupActionsMenu">
             <div class="w-full cursor-pointer" @click.stop="showEditor = !showEditor; showMenu = false"> Setings </div>
             <div class="w-full cursor-pointer" @click.stop="leaveGroup()"> Leave group </div>
             <div class="w-full cursor-pointer" @click.stop="deleteGroup()"> Delete group </div>
@@ -11,7 +11,7 @@
         <Teleport to="#teleport-target">
             <Transition>
                 <form v-if="showEditor" id="groupEditor" class="flex flex-col justify-left p-2 absolute w-80 space-y-1"
-                    ref="clickoutClose">
+                    ref="groupEditor">
                     <!-- <span class="absolute cursor-pointer" @click="showEditor = false;">x</span> -->
                     <label for="groupName">Name:</label>
                     <input type="text" id="groupName" name="groupName" v-model="editorName" required />
@@ -54,7 +54,8 @@ const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const groups = inject('groups');
 
-const clickoutClose = ref(null);
+const groupActionsMenu = ref(null);
+const groupEditor = ref(null);
 const groupNameRef = ref(props.groupName);
 const showMenu = ref(false);
 const showEditor = ref(false);
@@ -75,7 +76,7 @@ groupNameRef.value = groupNamePreview.join('').slice(0, 3);
 
 onMounted(() => {
     document.addEventListener("click", (e) => {
-        if (e.target == clickoutClose.value || e.target.parentNode == clickoutClose.value) return;
+        if (e.target == groupEditor.value || e.target.parentNode == groupEditor.value) return;
         showEditor.value = false;
     });
 });
@@ -115,6 +116,7 @@ async function deleteGroup() {
         groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.groupId })), 1);
         if (activeGroup.value === props.groupId)
             activeGroup.value = null;
+        showMenu.value = false;
     }
 }
 
@@ -134,6 +136,7 @@ async function leaveGroup() {
         groups.value.splice(groups.value.findIndex((grp => { return grp.id === props.groupId })), 1);
         if (activeGroup.value === props.groupId)
             activeGroup.value = null;
+        showMenu = false;
     }
 }
 
@@ -160,6 +163,7 @@ async function updateGroup() {
         selectedGroup.name = payload.name;
         selectedGroup.allowJoining = payload.allowJoining;
         if (payload.description) selectedGroup.description = payload.description;
+        showEditor.value = false;
     }
 }
 </script>

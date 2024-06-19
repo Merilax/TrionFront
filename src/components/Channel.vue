@@ -3,14 +3,14 @@
         @contextmenu.prevent.stop="showMenu = !showMenu" @click="setActiveChannel()">
         {{ channelName }}
         <span class="extra" @click.stop.prevent="showMenu = !showMenu">...</span>
-        <div v-if="showMenu" class="dropdown absolute w-full space-y-1">
+        <div v-if="showMenu" class="dropdown absolute w-full space-y-1" ref="channelActionsMenu">
             <div class="w-full" @click.stop.prevent="showEditor = !showEditor; showMenu = false">Settings</div>
             <div class="w-full" @click.stop.prevent="deleteChannel()">Delete</div>
         </div>
         <Teleport to="#teleport-target">
             <Transition>
                 <form v-if="showEditor" id="channelEditor" class="flex flex-col p-2 absolute w-80 space-y-1"
-                    ref="clickoutClose">
+                    ref="channelEditor">
                     <label for="channelName">Name:</label>
                     <input type="text" id="channelName" name="channelName" v-model="editorName" required />
                     <label for="channelDescription">Description:</label>
@@ -37,8 +37,10 @@ const activeChannel = inject('activeChannel');
 const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const channels = inject('channels');
+const messages = inject('messages');
 
-const clickoutClose = ref(null);
+const channelActionsMenu = ref(null);
+const channelEditor = ref(null);
 const showMenu = ref(false);
 const showEditor = ref(false);
 
@@ -50,7 +52,7 @@ editorDescription.value = props.channelDescription;
 
 onMounted(() => {
     document.addEventListener("click", (e) => {
-        if (e.target == clickoutClose.value || e.target.parentNode == clickoutClose.value) return;
+        if (e.target == channelEditor.value || e.target.parentNode == channelEditor.value) return;
         showEditor.value = false;
     });
 });
@@ -87,8 +89,11 @@ async function deleteChannel() {
 
     if (json.ok) {
         channels.value.splice(channels.value.findIndex((chn => { return chn.id === props.channelId })), 1);
-        if (activeChannel.value === props.channelId)
+        if (activeChannel.value === props.channelId) {
             activeChannel.value = null;
+            messages.value = [];
+        }
+        showMenu.value = false;
     }
 }
 
@@ -114,6 +119,7 @@ async function updateChannel() {
 
         selectedChannel.name = payload.name;
         if (payload.description) selectedChannel.description = payload.description;
+        showEditor.value = false;
     }
 }
 </script>

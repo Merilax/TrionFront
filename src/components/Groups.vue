@@ -3,7 +3,7 @@
         <button id="createGroupBtn" @click.stop.prevent="showGroupCreator = !showGroupCreator">+</button>
 
         <Transition>
-            <form v-if="showGroupCreator" id="groupCreator" class="flex flex-col p-2">
+            <form v-if="showGroupCreator" id="groupCreator" class="flex flex-col p-2" ref="groupCreator">
                 <label for="groupName">Group name:</label>
                 <input type="text" id="groupName" name="groupName" v-model="groupCreatorName" />
                 <button @click.stop.prevent="createGroup()" class="mt-2">Create group</button>
@@ -22,7 +22,7 @@
 
 <script setup>
 import * as trionConfig from '../../trion.config.json';
-import { inject, provide, ref } from 'vue';
+import { inject, onMounted, provide, ref } from 'vue';
 import Group from './GroupIcon.vue';
 import Cookies from 'js-cookie';
 
@@ -30,6 +30,7 @@ const loginUser = inject('loginUser');
 const loginToken = inject('loginToken');
 const loggedIn = inject('loggedIn');
 
+const groupCreator = ref(null);
 const groups = ref([]);
 const showGroupCreator = ref(false);
 const groupCreatorName = ref("");
@@ -57,6 +58,13 @@ if (res.status == 401) {
 
 groups.value = json.data;
 
+onMounted(() => {
+    document.addEventListener("click", (e) => {
+        if (e.target == groupCreator.value || e.target.parentNode == groupCreator.value) return;
+        showGroupCreator.value = false;
+    });
+});
+
 async function createGroup() {
     if (groupCreatorName.value == "") return;
 
@@ -79,8 +87,10 @@ async function createGroup() {
         return;
     }
 
-    if (json.ok) groups.value.push(json.data);
-    console.log(groups.value);
+    if (json.ok) {
+        groups.value.push(json.data);
+        showGroupCreator.value = false;
+    }
 }
 
 async function joinGroup() {
@@ -105,7 +115,10 @@ async function joinGroup() {
         return;
     }
 
-    if (json.ok) groups.value.push(json.data);
+    if (json.ok) {
+        groups.value.push(json.data);
+        showGroupCreator.value = false;
+    }
 }
 </script>
 

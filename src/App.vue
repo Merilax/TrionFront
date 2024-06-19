@@ -48,6 +48,9 @@ const getFormattedDateTime = (timestamp) => {
     return `${hours}:${minutes}:${seconds}`;
 }
 
+const messages = ref([]);
+
+provide('messages', messages);
 provide('getFormattedDateTime', getFormattedDateTime);
 </script>
 
